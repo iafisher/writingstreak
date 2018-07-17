@@ -1,13 +1,19 @@
-<!DOCTYPE html>
+{% extends 'base.html' %}
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
+{% load static %}
 
-    <title>Writing Streak</title>
-  </head>
+{% block extrahead %}
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous">
+</script>
 
-  <body>
-    <p>Hello, world!</p>
-  </body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+<script src="{% static 'compose/js/index.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<textarea></textarea>
+{% endblock %}

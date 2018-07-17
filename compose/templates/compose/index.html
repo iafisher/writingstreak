@@ -11,9 +11,14 @@
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
 <script src="{% static 'compose/js/index.js' %}"></script>
+
+<link rel="stylesheet" href="{% static 'compose/css/index.css' %}">
 {% endblock %}
 
 {% block content %}
-{% csrf_token %}
-<textarea></textarea>
+<div id="container">
+  {% csrf_token %}
+  <textarea>{{ saved_text }}</textarea>
+  <p id="wordCount"></p>
+</div>
 {% endblock %}

@@ -18,11 +18,25 @@ $.ajaxSetup({
 
 
 $(document).ready(function () {
+    countWords();
     setInterval(uploadText, 5000);
+
+    $("textarea").keyup(countWords);
 });
 
 function uploadText() {
     var text = $("textarea").val();
-    console.log(text);
     $.post("/compose/upload", {"text": text});
+}
+
+function countWords() {
+    var text = $("textarea").val();
+    text = text.replace(/\s+/g, " ");
+    console.log(text);
+    var count = text.split(" ").filter(word => word.length > 0).length;
+    if (count == 1) {
+        $("#wordCount").html(count + " word");
+    } else {
+        $("#wordCount").html(count + " words");
+    }
 }

@@ -7,7 +7,12 @@ from .models import DailyWriting
 
 
 def index(request):
-    return render(request, 'compose/index.html')
+    dailywriting, _ = DailyWriting.objects.get_or_create(
+            date=datetime.date.today())
+    context = {
+        'saved_text': dailywriting.text
+    }
+    return render(request, 'compose/index.html', context)
 
 def upload(request):
     if request.POST:

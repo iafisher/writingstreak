@@ -1,4 +1,5 @@
 import datetime
+import json
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -14,14 +15,16 @@ def index(request):
     return render(request, 'compose/index.html', context)
 
 def upload(request):
-    if request.POST:
-        text = request.POST['text']
+    if request.method == 'POST':
+        obj = json.loads(request.body.decode('utf-8'))
+        text = obj['text']
         dailywriting, _ = DailyWriting.objects.get_or_create(
                 date=datetime.date.today())
         dailywriting.text = text
         dailywriting.save()
         return HttpResponse()
     else:
+        print('Redirecting!')
         return redirect('compose:index')
 
 def archive(request, year, month, day):

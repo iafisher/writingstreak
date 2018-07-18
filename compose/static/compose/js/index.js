@@ -1,48 +1,43 @@
 'use strict';
 
-/* CSRF set-up courtesy of https://docs.djangoproject.com/en/2.0/ref/csrf/ */
-
 let csrftoken = Cookies.get("csrftoken");
 
-function csrfSafeMethod(method) {
-    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+// Call the onload function when the document is ready.
+if (document.readyState === "complete" || (document.readyState !== "loading" &&
+        !document.documentElement.doScroll)) {
+    onload();
+} else {
+    document.addEventListener("DOMContentLoaded", onload);
 }
 
-$.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
-        }
-    }
-});
-
-
-$(document).ready(function () {
+function onload() {
     countWords();
     setInterval(uploadText, 1000);
-
-    $("textarea").keyup(countWords);
-});
+    document.querySelector("textarea").addEventListener("keyup", countWords);
+}
 
 let lastSaved = "";
-
 function uploadText() {
-    let text = $("textarea").val();
+    let text = document.querySelector("textarea").value;
     if (lastSaved != text) {
-        $.post("/compose/upload", {"text": text}, function (data) {
-            lastSaved = text;
-        });
+        fetch("/upload", {
+            method: "post",
+            headers: {
+                "X-CSRFToken": csrftoken,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({text: text})
+        }).then(() => lastSaved = text);
     }
 }
 
 function countWords() {
-    let text = $("textarea").val();
+    let text = document.querySelector("textarea").value;
     text = text.replace(/\s+/g, " ");
-    console.log(text);
     let count = text.split(" ").filter(word => word.length > 0).length;
     if (count == 1) {
-        $("#wordCount").html(count + " word");
+        document.querySelector("#wordCount").innerHTML = count + " word";
     } else {
-        $("#wordCount").html(count + " words");
+        document.querySelector("#wordCount").innerHTML = count + " words";
     }
 }

@@ -1,10 +1,5 @@
-#container {
-  margin: 0 auto;
-  margin-top: 30px;
-  width: 40%;
-}
-
 textarea {
+  margin-top: 30px;
   padding: 5px;
   width: 100%;
   height: 200px;

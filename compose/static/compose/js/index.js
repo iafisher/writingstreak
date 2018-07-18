@@ -2,7 +2,7 @@
 
 /* CSRF set-up courtesy of https://docs.djangoproject.com/en/2.0/ref/csrf/ */
 
-var csrftoken = Cookies.get("csrftoken");
+let csrftoken = Cookies.get("csrftoken");
 
 function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
@@ -24,10 +24,10 @@ $(document).ready(function () {
     $("textarea").keyup(countWords);
 });
 
-var lastSaved = "";
+let lastSaved = "";
 
 function uploadText() {
-    var text = $("textarea").val();
+    let text = $("textarea").val();
     if (lastSaved != text) {
         $.post("/compose/upload", {"text": text}, function (data) {
             lastSaved = text;
@@ -36,10 +36,10 @@ function uploadText() {
 }
 
 function countWords() {
-    var text = $("textarea").val();
+    let text = $("textarea").val();
     text = text.replace(/\s+/g, " ");
     console.log(text);
-    var count = text.split(" ").filter(word => word.length > 0).length;
+    let count = text.split(" ").filter(word => word.length > 0).length;
     if (count == 1) {
         $("#wordCount").html(count + " word");
     } else {

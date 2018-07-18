@@ -4,7 +4,6 @@ from django.urls import reverse
 class DailyWriting(models.Model):
     date = models.DateField()
     text = models.TextField()
-    backup = models.TextField()
 
     def get_absolute_url(self):
         kwargs = {

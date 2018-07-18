@@ -20,6 +20,8 @@ def upload(request):
         dailywriting, _ = DailyWriting.objects.get_or_create(
                 date=datetime.date.today())
         dailywriting.text = text
+        if len(text) > len(dailywriting.backup):
+            dailywriting.backup = text
         dailywriting.save()
         return HttpResponse()
     else:

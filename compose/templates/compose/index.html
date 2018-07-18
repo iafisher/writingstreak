@@ -13,7 +13,7 @@
 {% block content %}
 <div class="container">
   {% csrf_token %}
-  <textarea id="textInput">{{ saved_text }}</textarea>
+  <textarea id="textInput">{{ writing.text }}</textarea>
   <p><span id="wordCount">0 words</span></p>
   <h3>Past writing:</h3>
   <ul>

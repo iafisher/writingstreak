@@ -10,8 +10,8 @@ from .models import DailyWriting
 def index(request):
     today = datetime.date.today()
     dailywriting, _ = DailyWriting.objects.get_or_create(date=today)
-    past_writing = DailyWriting.objects.filter(date__lt=today)
-    context = {'saved_text': dailywriting.text, 'past': past_writing}
+    past_writing = DailyWriting.objects.filter(date__lt=today).order_by('-date')
+    context = {'writing': dailywriting, 'past': past_writing}
     return render(request, 'compose/index.html', context)
 
 def upload(request):
@@ -24,11 +24,12 @@ def upload(request):
         dailywriting.save()
         return HttpResponse()
     else:
-        print('Redirecting!')
         return redirect('compose:index')
 
 def archive(request, year, month, day):
+    today = datetime.date.today()
     date = datetime.date(year, month, day)
     dailywriting = get_object_or_404(DailyWriting, date=date)
-    context = {'writing': dailywriting}
+    past_writing = DailyWriting.objects.filter(date__lt=today).order_by('-date')
+    context = {'writing': dailywriting, 'past': past_writing}
     return render(request, 'compose/archive.html', context)

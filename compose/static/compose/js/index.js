@@ -11,14 +11,15 @@ if (document.readyState === "complete" || (document.readyState !== "loading" &&
 }
 
 function onload() {
+    lastSaved = document.querySelector("#textInput").value;
     countWords();
     setInterval(uploadText, 1000);
-    document.querySelector("textarea").addEventListener("keyup", countWords);
+    document.querySelector("#textInput").addEventListener("keyup", countWords);
 }
 
 let lastSaved = "";
 function uploadText() {
-    let text = document.querySelector("textarea").value;
+    let text = document.querySelector("#textInput").value;
     if (lastSaved != text) {
         fetch("/upload", {
             method: "post",
@@ -32,7 +33,7 @@ function uploadText() {
 }
 
 function countWords() {
-    let text = document.querySelector("textarea").value;
+    let text = document.querySelector("#textInput").value;
     text = text.replace(/\s+/g, " ");
     let count = text.split(" ").filter(word => word.length > 0).length;
     if (count == 1) {

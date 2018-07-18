@@ -19,14 +19,20 @@ $.ajaxSetup({
 
 $(document).ready(function () {
     countWords();
-    setInterval(uploadText, 5000);
+    setInterval(uploadText, 1000);
 
     $("textarea").keyup(countWords);
 });
 
+var lastSaved = "";
+
 function uploadText() {
     var text = $("textarea").val();
-    $.post("/compose/upload", {"text": text});
+    if (lastSaved != text) {
+        $.post("/compose/upload", {"text": text}, function (data) {
+            lastSaved = text;
+        });
+    }
 }
 
 function countWords() {

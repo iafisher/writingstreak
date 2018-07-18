@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="{% static 'compose/css/index.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="container">
+  <p><a href="/">Home</a></p>
+  <h2>{{ writing.date }}</h2>
+  {% autoescape off %}
+  <p>{{ writing.text_as_html }}</p>
+  {% endautoescape %}
+</div>
+{% endblock %}

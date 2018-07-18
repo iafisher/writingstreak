@@ -20,5 +20,11 @@
   {% csrf_token %}
   <textarea>{{ saved_text }}</textarea>
   <p><span id="wordCount">0 words</span></p>
+  <h3>Past writing:</h3>
+  <ul>
+    {% for writing in past %}
+    <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a></li>
+    {% endfor %}
+  </ul>
 </div>
 {% endblock %}

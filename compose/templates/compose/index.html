@@ -18,7 +18,9 @@
   <h3>Past writing:</h3>
   <ul>
     {% for writing in past %}
-    <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a></li>
+    <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a>
+      ({{ writing.word_count }} word{{ writing.word_count|pluralize }})
+    </li>
     {% endfor %}
   </ul>
 </div>

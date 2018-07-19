@@ -16,5 +16,8 @@ class DailyWriting(models.Model):
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'
 
+    def word_count(self):
+        return len(self.text.split())
+
     def __str__(self):
         return 'Daily Writing, ' + self.date.isoformat()

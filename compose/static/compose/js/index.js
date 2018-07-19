@@ -1,3 +1,12 @@
+/**
+ * A small JavaScript module to control the various operations on the composer
+ * page, including
+ *
+ *   - Saving text to the back-end.
+ *   - Displaying the word count.
+ *   - Resizing the textarea.
+ */
+
 'use strict';
 
 let csrftoken = Cookies.get("csrftoken");
@@ -11,15 +20,38 @@ if (document.readyState === "complete" || (document.readyState !== "loading" &&
 }
 
 function onload() {
-    lastSaved = document.querySelector("#textInput").value;
+    let textarea = document.getElementById("textInput");
+    lastSaved = textarea.value;
+
+    setTextareaHeight();
     countWords();
+
+    // Upload the text once every second.
     setInterval(uploadText, 1000);
-    document.querySelector("#textInput").addEventListener("keyup", countWords);
+
+    textarea.oninput = function () {
+        setTextareaHeight();
+        countWords();
+    };
 }
 
+function setTextareaHeight() {
+    let textarea = document.getElementById("textInput");
+    // Courtesy of https://stackoverflow.com/questions/7745741/
+    textarea.style.height = "";
+    textarea.style.height = Math.min(window.innerHeight * 0.8,
+            textarea.scrollHeight) + "px";
+}
+
+// Store the last saved version of the text, to avoid unnecessary re-uploads of
+// the same text.
 let lastSaved = "";
+
+/**
+ * Upload the contents of the textarea to the back-end server.
+ */
 function uploadText() {
-    let text = document.querySelector("#textInput").value;
+    let text = document.getElementById("textInput").value;
     if (lastSaved != text) {
         fetch("/upload", {
             method: "post",
@@ -32,13 +64,18 @@ function uploadText() {
     }
 }
 
+/**
+ * Count the number of words in the textarea and update the word count display.
+ */
 function countWords() {
-    let text = document.querySelector("#textInput").value;
+    let text = document.getElementById("textInput").value;
     text = text.replace(/\s+/g, " ");
     let count = text.split(" ").filter(word => word.length > 0).length;
+
+    let wordCountElem = document.getElementById("wordCount");
     if (count == 1) {
-        document.querySelector("#wordCount").innerHTML = count + " word";
+        wordCountElem.innerHTML = count + " word";
     } else {
-        document.querySelector("#wordCount").innerHTML = count + " words";
+        wordCountElem.innerHTML = count + " words";
     }
 }

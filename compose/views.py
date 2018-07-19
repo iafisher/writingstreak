@@ -11,7 +11,9 @@ def index(request):
     today = datetime.date.today()
     dailywriting, _ = DailyWriting.objects.get_or_create(date=today)
     past_writing = DailyWriting.objects.filter(date__lt=today).order_by('-date')
-    context = {'writing': dailywriting, 'past': past_writing}
+    word_count = sum(w.word_count for w in past_writing)
+    context = {'writing': dailywriting, 'past': past_writing,
+        'word_count': word_count}
     return render(request, 'compose/index.html', context)
 
 def upload(request):

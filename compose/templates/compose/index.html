@@ -14,7 +14,10 @@
 <div class="container">
   {% csrf_token %}
   <textarea id="textInput">{{ writing.text }}</textarea>
-  <p><span id="wordCount">0 words</span></p>
+  <p>
+    <span id="wordCount">0 words</span>
+    (<span id="cumulativeWordCount">{{ word_count }}</span> to date)
+  </p>
   <h3>Past writing:</h3>
   <ul>
     {% for writing in past %}

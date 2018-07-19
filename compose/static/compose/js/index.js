@@ -9,7 +9,7 @@
 
 'use strict';
 
-let csrftoken = Cookies.get("csrftoken");
+let cumulativeWordCount;
 
 // Call the onload function when the document is ready.
 if (document.readyState === "complete" || (document.readyState !== "loading" &&
@@ -22,6 +22,7 @@ if (document.readyState === "complete" || (document.readyState !== "loading" &&
 function onload() {
     let textarea = document.getElementById("textInput");
     lastSaved = textarea.value;
+    cumulativeWordCount = parseInt(document.getElementById("cumulativeWordCount").textContent);
 
     setTextareaHeight();
     countWords();
@@ -46,6 +47,7 @@ function setTextareaHeight() {
 // Store the last saved version of the text, to avoid unnecessary re-uploads of
 // the same text.
 let lastSaved = "";
+let csrftoken = Cookies.get("csrftoken");
 
 /**
  * Upload the contents of the textarea to the back-end server.
@@ -78,4 +80,7 @@ function countWords() {
     } else {
         wordCountElem.innerHTML = count + " words";
     }
+
+    document.getElementById("cumulativeWordCount").innerHTML =
+        cumulativeWordCount + count;
 }

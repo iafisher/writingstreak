@@ -3,7 +3,13 @@ from django.urls import reverse
 
 class DailyWriting(models.Model):
     date = models.DateField()
-    text = models.TextField()
+    text = models.TextField(blank=True)
+    word_count = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.word_count = self.calculate_word_count()
+        ret = super().save(*args, **kwargs)
+        return ret
 
     def get_absolute_url(self):
         kwargs = {
@@ -16,7 +22,7 @@ class DailyWriting(models.Model):
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'
 
-    def word_count(self):
+    def calculate_word_count(self):
         return len(self.text.split())
 
     def __str__(self):

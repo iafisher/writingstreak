@@ -22,13 +22,15 @@ if (document.readyState === "complete" || (document.readyState !== "loading" &&
 function onload() {
     let textarea = document.getElementById("textInput");
     lastSaved = textarea.value;
-    cumulativeWordCount = parseInt(document.getElementById("cumulativeWordCount").textContent);
+    cumulativeWordCount = parseInt(
+        document.getElementById("cumulativeWordCount").textContent);
 
     setTextareaHeight();
     countWords();
 
-    // Upload the text once every second.
-    setInterval(uploadText, 1000);
+    // Upload the text every 300 milliseconds. A POST request is only actually
+    // sent when the text has been changed from the saved version.
+    setInterval(uploadText, 300);
 
     textarea.oninput = function () {
         setTextareaHeight();
@@ -38,8 +40,8 @@ function onload() {
 
 function setTextareaHeight() {
     let textarea = document.getElementById("textInput");
-    // Courtesy of https://stackoverflow.com/questions/7745741/
-    textarea.style.height = "";
+    // Courtesy of https://stackoverflow.com/questions/454202/
+    textarea.style.height = "auto";
     textarea.style.height = Math.min(window.innerHeight * 0.8,
             textarea.scrollHeight) + "px";
 }

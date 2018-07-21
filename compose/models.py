@@ -26,4 +26,6 @@ class DailyWriting(models.Model):
         return len(self.text.split())
 
     def __str__(self):
-        return 'Daily Writing, ' + self.date.isoformat()
+        return 'Daily Writing, {} ({} word{})'.format(
+            self.date.isoformat(), self.word_count,
+            '' if self.word_count == 1 else 's')

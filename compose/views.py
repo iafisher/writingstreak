@@ -9,10 +9,15 @@ from .models import DailyWriting
 
 def index(request):
     today = datetime.date.today()
-    dailywriting, _ = DailyWriting.objects.get_or_create(date=today)
+    try:
+        dailywriting = DailyWriting.objects.get(date=today)
+    except DailyWriting.DoesNotExist:
+        text = ''
+    else:
+        text = dailywriting.text
     past_writing = DailyWriting.objects.filter(date__lt=today).order_by('-date')
     word_count = sum(w.word_count for w in past_writing)
-    context = {'writing': dailywriting, 'past': past_writing,
+    context = {'writing': text, 'past': past_writing,
         'word_count': word_count}
     return render(request, 'compose/index.html', context)
 
@@ -20,10 +25,13 @@ def upload(request):
     if request.method == 'POST':
         obj = json.loads(request.body.decode('utf-8'))
         text = obj['text']
-        dailywriting, _ = DailyWriting.objects.get_or_create(
+        dailywriting, created = DailyWriting.objects.get_or_create(
                 date=datetime.date.today())
-        dailywriting.text = text
-        dailywriting.save()
+        if text:
+            dailywriting.text = text
+            dailywriting.save()
+        else:
+            dailywriting.delete()
         return HttpResponse()
     else:
         return redirect('compose:index')

@@ -2,7 +2,7 @@
   margin-top: 30px;
   padding: 5px;
   width: 100%;
-  height: 200px;
+  min-height: 200px;
   font-size: 16px;
   overflow-y: hidden;
 }

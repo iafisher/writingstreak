@@ -73,7 +73,7 @@ function uploadText() {
         .catch(error => {
             console.error('Fetch error: ', error);
             errorMsg.innerHTML = "Error: could not save changes. " +
-                "Do you have an Internet connection?";
+                "Is the server running";
         });
     }
 }

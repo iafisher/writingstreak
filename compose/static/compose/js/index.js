@@ -32,7 +32,7 @@ function onload() {
     // sent when the text has been changed from the saved version.
     setInterval(uploadText, 300);
 
-    textarea.oninput = function () {
+    textarea.oninput = () => {
         setTextareaHeight();
         countWords();
     };

@@ -57,6 +57,8 @@ let csrftoken = Cookies.get("csrftoken");
 function uploadText() {
     let text = document.getElementById("textInput").value;
     if (lastSaved != text) {
+        let errorMsg = document.getElementById("errorMsg");
+
         fetch("/upload", {
             method: "post",
             headers: {
@@ -64,7 +66,15 @@ function uploadText() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({text: text})
-        }).then(() => lastSaved = text);
+        }).then(() => {
+            lastSaved = text;
+            errorMsg.innerHTML = "";
+        })
+        .catch(error => {
+            console.error('Fetch error: ', error);
+            errorMsg.innerHTML = "Error: could not save changes. " +
+                "Do you have an Internet connection?";
+        });
     }
 }
 

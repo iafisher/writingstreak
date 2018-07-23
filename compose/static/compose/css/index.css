@@ -6,3 +6,8 @@
   font-size: 16px;
   overflow-y: hidden;
 }
+
+#errorMsg {
+  font-weight: bold;
+  color: crimson;
+}

@@ -36,6 +36,15 @@ function onload() {
         setTextareaHeight();
         countWords();
     };
+
+    // Confirm before closing page if there are unsaved changes.
+    window.onbeforeunload = function (e) {
+        if (lastSaved !== textarea.value) {
+            // I don't think the contents of this message actually matters:
+            // Firefox doesn't seem to display it.
+            return 'You have unsaved changes.';
+        }
+    }
 }
 
 function setTextareaHeight() {

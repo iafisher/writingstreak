@@ -11,3 +11,16 @@
   font-weight: bold;
   color: crimson;
 }
+
+#accountMenu {
+    list-style: none;
+}
+
+#accountMenu li {
+    display: inline;
+    margin-left: 20px;
+}
+
+#accountMenu li:first {
+    margin-left: 0;
+}

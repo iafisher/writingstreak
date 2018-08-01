@@ -74,10 +74,18 @@ function uploadText() {
                 "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({text: text})
-        }).then(() => {
-            lastSaved = text;
-            errorMsg.innerHTML = "";
+            body: JSON.stringify({text: text}),
+            credentials: 'include',
+        }).then(response => {
+            const errno = response.status;
+            if (errno >= 200 && errno < 300) {
+                lastSaved = text;
+                errorMsg.innerHTML = "";
+            } else {
+                console.error('Fetch error: status code', errno);
+                errorMsg.innerHTML = "Error: could not save changes. " +
+                    "The server returned error code " + errno + ".";
+            }
         })
         .catch(error => {
             console.error('Fetch error: ', error);

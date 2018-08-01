@@ -20,6 +20,8 @@
     <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a>
       ({{ writing.word_count }} word{{ writing.word_count|pluralize }})
     </li>
+    {% empty %}
+    <li>No writing yet!</li>
     {% endfor %}
   </ul>
 </div>

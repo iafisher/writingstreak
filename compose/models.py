@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
+
 
 class DailyWriting(models.Model):
     date = models.DateField()
@@ -29,3 +31,24 @@ class DailyWriting(models.Model):
         return 'Daily Writing, {} ({} word{})'.format(
             self.date.isoformat(), self.word_count,
             '' if self.word_count == 1 else 's')
+
+
+class Streak(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    min_word_count = models.IntegerField()
+
+    def __str__(self):
+        return 'Streak, {} to {}'.format(self.start_date.isoformat(),
+            self.end_date.isoformat())
+
+
+class WSUser(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    word_count = models.IntegerField(default=100)
+
+    class Meta:
+        verbose_name = 'Writing Streak user'
+
+    def __str__(self):
+        return str(self.user)

@@ -58,3 +58,17 @@ class DailyEntry(models.Model):
 
     def __str__(self):
         return '{}, {}'.format(self.user, self.date.isoformat())
+
+
+def get_current_streak(user):
+    """Get the length of the user's current streak, not including today."""
+    last_date = datetime.date.today()
+    entries = DailyEntry.objects.filter(user=user, date__lt=last_date) \
+        .order_by('-date')
+    for count, entry in enumerate(entries):
+        if last_date - entry.date != datetime.timedelta(1):
+            break
+        elif entry.word_count < entry.word_count_goal:
+            break
+        last_date = entry.date
+    return count

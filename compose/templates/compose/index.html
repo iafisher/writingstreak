@@ -17,11 +17,14 @@
   {% include 'compose/accountmenu.html' %}
 
   <textarea id="text-input">{{ entry.text }}</textarea>
+
   <p id="error-message"></p>
+
   <p>
     <span id="word-count">0 words</span>
     (<span id="cumulative-word-count">{{ total_word_count }}</span> to date)
   </p>
+
   <p>
     You need <span id="words-to-goal">{{ words_to_goal }} more word{{ words_to_goal|pluralize}}</span>
     to meet your daily goal of <span id="goal">{{ entry.word_count_goal }}</span>
@@ -34,6 +37,11 @@
     <button id="save-button">Save</button>
     <button id="cancel-button">Cancel</button>
   </p>
+
+  <p>
+    You are on a <span id="streak-length">{{ streak_length }}</span> day streak.
+  </p>
+
   <h3>Past writing:</h3>
   <ul>
     {% for past_entry in past_entries %}

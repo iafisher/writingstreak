@@ -7,7 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import DailyEntry
+from .models import DailyEntry, get_current_streak
 
 
 @login_required
@@ -20,6 +20,7 @@ def index(request):
     context = {
         'entry': entry,
         'past_entries': past_entries,
+        'streak_length': get_current_streak(request.user),
         'total_word_count': total_word_count,
         'user': request.user,
         'words_to_goal': words_to_goal

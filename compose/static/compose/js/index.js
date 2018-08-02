@@ -16,6 +16,8 @@ let gLastSaved = "";
 let gCumulativeWordCount;
 // The goal word count for the day, as an integer.
 let gGoalWordCount;
+// The length of the active streak, not including today.
+let gStreakLength;
 let gCsrftoken = Cookies.get("csrftoken");
 
 // Elements that the JS manipulates.
@@ -29,6 +31,7 @@ let eGoalInput;
 let eErrorMessage;
 let eWordCount;
 let eWordsToGoal;
+let eStreakLength;
 
 // Call the onload function when the document is ready.
 if (document.readyState === "complete" || (document.readyState !== "loading" &&
@@ -50,11 +53,13 @@ function onload() {
     eErrorMessage = document.getElementById("error-message");
     eWordCount = document.getElementById("word-count");
     eWordsToGoal = document.getElementById("words-to-goal");
+    eStreakLength = document.getElementById("streak-length");
 
     // Set global variables.
     gLastSaved = eTextInput.value;
     gCumulativeWordCount = parseInt(eCumulativeWordCount.textContent);
     gGoalWordCount = parseInt(eGoal.textContent);
+    gStreakLength = parseInt(eStreakLength.textContent);
 
     setTextareaHeight();
     countWords();
@@ -193,6 +198,7 @@ function countWords() {
     redrawWordCounter(count);
     redrawWordsToGoal(count);
     redrawCumulativeWordCounter(count);
+    redrawStreakLength(count);
 }
 
 
@@ -218,6 +224,18 @@ function redrawWordCounter(newCount) {
  */
 function redrawCumulativeWordCounter(newCount) {
     eCumulativeWordCount.textContent = gCumulativeWordCount + newCount;
+}
+
+
+/**
+ * Redraw the streak-length element with the new word count.
+ */
+function redrawStreakLength(newCount) {
+    if (newCount >= gGoalWordCount) {
+        eStreakLength.textContent = gStreakLength + 1;
+    } else {
+        eStreakLength.textContent = gStreakLength;
+    }
 }
 
 

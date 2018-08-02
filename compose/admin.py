@@ -1,13 +1,10 @@
 from django.contrib import admin
 
-from .models import DailyEntry, DailyWriting, Streak, WordCountGoal
+from .models import DailyEntry
 
 
-class DailyWritingAdmin(admin.ModelAdmin):
+class DailyEntryAdmin(admin.ModelAdmin):
     readonly_fields = ('word_count',)
 
 
-admin.site.register(DailyEntry)
-admin.site.register(DailyWriting, DailyWritingAdmin)
-admin.site.register(Streak)
-admin.site.register(WordCountGoal)
+admin.site.register(DailyEntry, DailyEntryAdmin)

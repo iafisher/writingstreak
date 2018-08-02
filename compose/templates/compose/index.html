@@ -16,14 +16,14 @@
 
   {% include 'compose/accountmenu.html' %}
 
-  <textarea id="textInput">{{ writing }}</textarea>
+  <textarea id="textInput">{{ entry.text }}</textarea>
   <p id="errorMsg"></p>
   <p>
     <span id="wordCount">0 words</span>
-    (<span id="cumulativeWordCount">{{ word_count }}</span> to date)
+    (<span id="cumulativeWordCount">{{ total_word_count }}</span> to date)
   </p>
   <p>
-    Current daily word goal: <span id="goal">{{ goal.count }}</span>
+    Current daily word goal: <span id="goal">{{ entry.word_count_goal }}</span>
     <!-- Hidden initially -->
     <input type="number" id="goalInput" step="10" min="10">
     words
@@ -35,9 +35,9 @@
   </p>
   <h3>Past writing:</h3>
   <ul>
-    {% for writing in past %}
-    <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a>
-      ({{ writing.word_count }} word{{ writing.word_count|pluralize }})
+    {% for past_entry in past_entries %}
+    <li><a href="{{ writing.get_absolute_url }}">{{ past_entry.date }}</a>
+      ({{ past_entry.word_count }} word{{ past_entry.word_count|pluralize }})
     </li>
     {% empty %}
     <li>No writing yet!</li>

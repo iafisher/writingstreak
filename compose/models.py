@@ -7,12 +7,47 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 
+class DailyEntryManager(models.Manager):
+    def today(self, *, user):
+        today = datetime.date.today()
+        try:
+            return self.get(user=user, date=today)
+        except DailyEntry.DoesNotExist:
+            try:
+                most_recent = self.filter(user=user).latest('date')
+            except DailyEntry.DoesNotExist:
+                return self.create(date=today, user=user)
+            else:
+                return self.create(date=today, user=user,
+                    word_count_goal=most_recent.word_count_goal)
+
+
 class DailyEntry(models.Model):
     date = models.DateField()
     text = models.TextField(blank=True)
     word_count = models.IntegerField()
-    word_count_goal = models.IntegerField()
+    word_count_goal = models.IntegerField(default=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    objects = DailyEntryManager()
+
+    def save(self, *args, **kwargs):
+        self.word_count = self.calculate_word_count()
+        return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        kwargs = {
+            'year': self.date.year,
+            'month': self.date.month,
+            'day': self.date.day
+        }
+        return reverse('compose:archive', kwargs=kwargs)
+
+    def text_as_html(self):
+        return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'
+
+    def calculate_word_count(self):
+        return len(self.text.split())
 
 
 class DailyWriting(models.Model):

@@ -2,17 +2,9 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.urls import reverse
-
-
-class WordCountGoal(models.Model):
-    start_date = models.DateField()
-    end_date = models.DateField(blank=True, null=True)
-    count = models.IntegerField(default=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return '{0.count} words for {0.user}'.format(self)
 
 
 class DailyWriting(models.Model):
@@ -27,7 +19,8 @@ class DailyWriting(models.Model):
 
         today = datetime.date.today()
         yesterday = today - datetime.timedelta(1)
-        if self.word_count >= self.user.word_count:
+        goal = WordCountGoal.objects.filter(user=self.user).latest('start_date')
+        if self.word_count >= goal.count:
             try:
                 streak = Streak.objects.get(end_date__gte=yesterday,
                     user=self.user)
@@ -37,18 +30,13 @@ class DailyWriting(models.Model):
             else:
                 streak.end_date = today
                 streak.save()
-        elif self.word_count < self.user.word_count:
+        else:
             try:
                 streak = Streak.objects.get(end_date=today, user=self.user)
             except Streak.DoesNotExist:
                 pass
             else:
-                if streak.start_date == today:
-                    streak.delete()
-                else:
-                    streak.end_date = yesterday
-                    streak.save()
-
+                streak.pop_last_day()
         return ret
 
     def get_absolute_url(self):
@@ -71,10 +59,38 @@ class DailyWriting(models.Model):
             '' if self.word_count == 1 else 's')
 
 
+@receiver(pre_delete, sender=DailyWriting)
+def delete_writing(sender, instance, **kwargs):
+    today = datetime.date.today()
+    try:
+        streak = Streak.objects.get(user=instance.user, end_date=today)
+    except Streak.DoesNotExist:
+        pass
+    else:
+        streak.pop_last_day()
+
+
+class WordCountGoal(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField(blank=True, null=True)
+    count = models.IntegerField(default=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{0.count} words for {0.user}'.format(self)
+
+
 class Streak(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def pop_last_day(self):
+        if self.start_date == self.end_date:
+            self.delete()
+        else:
+            self.end_date -= datetime.timedelta(1)
+            self.save()
 
     def __str__(self):
         return '{}\'s streak, {} to {}'.format(self.user,

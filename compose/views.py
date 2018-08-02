@@ -41,7 +41,7 @@ def upload(request):
         obj = json.loads(request.body.decode('utf-8'))
         text = obj['text']
         dailywriting, created = DailyWriting.objects.get_or_create(
-                date=datetime.date.today(), user=request.user.wsuser)
+                date=datetime.date.today(), user=request.user)
         if text:
             dailywriting.text = text
             dailywriting.save()

@@ -16,6 +16,16 @@ class WSUser(models.Model):
         return str(self.user)
 
 
+class WordCountGoal(models.Model):
+    start_date = models.DateField()
+    end_date = models.DateField()
+    count = models.IntegerField()
+    user = models.ForeignKey(WSUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return '{0.count} word(s) for {0.user}'.format(self)
+
+
 class DailyWriting(models.Model):
     date = models.DateField()
     text = models.TextField(blank=True)

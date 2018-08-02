@@ -347,3 +347,17 @@ template {
   margin: 0 auto;
   width: 50%;
 }
+
+#accountMenu {
+    list-style: none;
+    float: right;
+}
+
+#accountMenu li {
+    display: inline;
+    margin-left: 20px;
+}
+
+#accountMenu li:first {
+    margin-left: 0;
+}

@@ -12,20 +12,6 @@
   color: crimson;
 }
 
-#accountMenu {
-    list-style: none;
-    float: right;
-}
-
-#accountMenu li {
-    display: inline;
-    margin-left: 20px;
-}
-
-#accountMenu li:first {
-    margin-left: 0;
-}
-
 #saveButton {
     display: none;
 }

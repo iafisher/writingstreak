@@ -8,6 +8,8 @@
 
 {% block content %}
 <div class="container">
+  {% include 'compose/accountmenu.html' %}
+  
   <p><a href="/">Home</a></p>
   <h2>{{ writing.date }}</h2>
   {% autoescape off %}

@@ -4,10 +4,11 @@ import json
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
+from django.db.models.fields import related_descriptors
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import DailyWriting
+from .models import DailyWriting, WSUser
 
 
 @login_required
@@ -19,11 +20,18 @@ def index(request):
         text = ''
     else:
         text = dailywriting.text
+
+    try:
+        wsuser = request.user.wsuser
+    except related_descriptors.RelatedObjectDoesNotExist:
+        wsuser = WSUser(user=request.user)
+        wsuser.save()
+
     past_writing = DailyWriting.objects.filter(date__lt=today) \
         .order_by('-date')
     word_count = sum(w.word_count for w in past_writing)
     context = {'writing': text, 'past': past_writing,
-        'word_count': word_count, 'user': request.user}
+        'word_count': word_count, 'user': wsuser}
     return render(request, 'compose/index.html', context)
 
 
@@ -39,6 +47,18 @@ def upload(request):
             dailywriting.save()
         else:
             dailywriting.delete()
+        return HttpResponse()
+    else:
+        return redirect('compose:index')
+
+
+@login_required
+def update_wc(request):
+    if request.method == 'POST':
+        obj = json.loads(request.body.decode('utf-8'))
+        new_wc = obj['wordCount']
+        request.user.wsuser.word_count = new_wc
+        request.user.wsuser.save()
         return HttpResponse()
     else:
         return redirect('compose:index')

@@ -37,6 +37,45 @@ function onload() {
         countWords();
     };
 
+    const editButton = document.getElementById("editButton");
+    const saveButton = document.getElementById("saveButton");
+    const cancelButton = document.getElementById("cancelButton");
+    const goalWordCount = document.getElementById("goalWordCount");
+    const goalWordCountInput = document.getElementById("goalWordCountInput");
+
+    editButton.onclick = () => {
+        editButton.style.display = "none";
+        saveButton.style.display = "inline-block";
+        cancelButton.style.display = "inline-block";
+
+        goalWordCountInput.value = goalWordCount.innerHTML;
+
+        goalWordCount.style.display = "none";
+        goalWordCountInput.style.display = "inline-block";
+    };
+
+    saveButton.onclick = () => {
+        editButton.style.display = "inline-block";
+        saveButton.style.display = "none";
+        cancelButton.style.display = "none";
+
+        let newWordCount = goalWordCountInput.value;
+        updateWordCount(newWordCount);
+        goalWordCount.innerHTML = newWordCount;
+
+        goalWordCount.style.display = "inline-block";
+        goalWordCountInput.style.display = "none";
+    };
+
+    cancelButton.onclick = () => {
+        editButton.style.display = "inline-block";
+        saveButton.style.display = "none";
+        cancelButton.style.display = "none";
+
+        goalWordCount.style.display = "inline-block";
+        goalWordCountInput.style.display = "none";
+    };
+
     // Confirm before closing page if there are unsaved changes.
     window.onbeforeunload = function (e) {
         if (lastSaved !== textarea.value) {
@@ -94,6 +133,34 @@ function uploadText() {
         });
     }
 }
+
+
+function updateWordCount(newCount) {
+    fetch("/update_wc", {
+        method: "post",
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({wordCount: newCount}),
+        credentials: 'include',
+    }).then(response => {
+        const errno = response.status;
+        if (errno >= 200 && errno < 300) {
+            errorMsg.innerHTML = "";
+        } else {
+            console.error('Fetch error: status code', errno);
+            errorMsg.innerHTML = "Error: could not save changes. " +
+                "The server returned error code " + errno + ".";
+        }
+    })
+    .catch(error => {
+        console.error('Fetch error: ', error);
+        errorMsg.innerHTML = "Error: could not save changes. " +
+            "Is the server running?";
+    });
+}
+
 
 /**
  * Count the number of words in the textarea and update the word count display.

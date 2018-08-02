@@ -15,8 +15,8 @@
   {% csrf_token %}
 
   <ul id="accountMenu">
-    <li>{{ user.username }}</li>
-    {% if user.is_staff %}<li><a href="{% url 'admin:index' %}" target="_blank">admin</a></li>{% endif %}
+    <li>{{ user.user.username }}</li>
+    {% if user.user.is_staff %}<li><a href="{% url 'admin:index' %}" target="_blank">admin</a></li>{% endif %}
     <li><a href="{% url 'compose:logout' %}">logout</a></li>
   </ul>
 
@@ -25,6 +25,17 @@
   <p>
     <span id="wordCount">0 words</span>
     (<span id="cumulativeWordCount">{{ word_count }}</span> to date)
+  </p>
+  <p>
+    Current daily word goal: <span id="goalWordCount">{{ user.word_count }}</span>
+    <!-- Hidden initially -->
+    <input type="number" id="goalWordCountInput" step="10" min="10">
+    words
+    <button id="editButton">Edit</button>
+
+    <!-- These buttons are hidden to begin with. -->
+    <button id="saveButton">Save</button>
+    <button id="cancelButton">Cancel</button>
   </p>
   <h3>Past writing:</h3>
   <ul>

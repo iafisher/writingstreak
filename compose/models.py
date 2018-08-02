@@ -2,8 +2,6 @@ import datetime
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
 from django.urls import reverse
 
 
@@ -57,7 +55,11 @@ class DailyEntry(models.Model):
         return len(self.text.split())
 
     def __str__(self):
-        return '{}, {}'.format(self.user, self.date.isoformat())
+        prefix = '{}, {}'.format(self.user, self.date.isoformat())
+        if self.text:
+            return prefix + ' ({}...)'.format(self.text[:40])
+        else:
+            return prefix
 
 
 def get_current_streak(user):

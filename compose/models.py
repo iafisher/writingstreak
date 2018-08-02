@@ -67,10 +67,13 @@ def get_current_streak(user):
     last_date = datetime.date.today()
     entries = DailyEntry.objects.filter(user=user, date__lt=last_date) \
         .order_by('-date')
-    for count, entry in enumerate(entries):
+
+    count = 0
+    for entry in entries:
         if last_date - entry.date != datetime.timedelta(1):
             break
         elif entry.word_count < entry.word_count_goal:
             break
+        count += 1
         last_date = entry.date
     return count

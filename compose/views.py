@@ -28,7 +28,7 @@ def index(request):
 
 
 @login_required
-def upload(request):
+def update_text(request):
     if request.method == 'POST':
         obj = json.loads(request.body.decode('utf-8'))
         text = obj['text']
@@ -41,10 +41,14 @@ def upload(request):
 
 
 @login_required
-def update_wc(request):
+def update_word_count(request):
     if request.method == 'POST':
-        obj = json.loads(request.body.decode('utf-8'))
-        new_wc = obj['wordCount']
+        try:
+            obj = json.loads(request.body.decode('utf-8'))
+            new_wc = obj['wordCountGoal']
+        except (UnicodeDecodeError, json.decoder.JSONDecodeError, KeyError):
+            return HttpResponse(status_code=400)
+
         entry = DailyEntry.objects.today(user=request.user)
         entry.word_count_goal = new_wc
         entry.save()

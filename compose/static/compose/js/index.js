@@ -9,7 +9,26 @@
 
 'use strict';
 
-let cumulativeWordCount;
+// Store the last saved version of the text, to avoid unnecessary re-uploads of
+// the same text.
+let gLastSaved = "";
+// The number of words written to date, as an integer.
+let gCumulativeWordCount;
+// The goal word count for the day, as an integer.
+let gGoalWordCount;
+let gCsrftoken = Cookies.get("csrftoken");
+
+// Elements that the JS manipulates.
+let eTextInput;
+let eCumulativeWordCount;
+let eEditButton;
+let eSaveButton;
+let eCancelButton;
+let eGoal;
+let eGoalInput;
+let eErrorMessage;
+let eWordCount;
+let eWordsToGoal;
 
 // Call the onload function when the document is ready.
 if (document.readyState === "complete" || (document.readyState !== "loading" &&
@@ -20,66 +39,74 @@ if (document.readyState === "complete" || (document.readyState !== "loading" &&
 }
 
 function onload() {
-    let textarea = document.getElementById("textInput");
-    lastSaved = textarea.value;
-    cumulativeWordCount = parseInt(
-        document.getElementById("cumulativeWordCount").textContent);
+    // Set the global element constants.
+    eTextInput = document.getElementById("text-input");
+    eCumulativeWordCount = document.getElementById("cumulative-word-count");
+    eEditButton = document.getElementById("edit-button");
+    eSaveButton = document.getElementById("save-button");
+    eCancelButton = document.getElementById("cancel-button");
+    eGoal = document.getElementById("goal");
+    eGoalInput = document.getElementById("goal-input");
+    eErrorMessage = document.getElementById("error-message");
+    eWordCount = document.getElementById("word-count");
+    eWordsToGoal = document.getElementById("words-to-goal");
+
+    // Set global variables.
+    gLastSaved = eTextInput.value;
+    gCumulativeWordCount = parseInt(eCumulativeWordCount.textContent);
+    gGoalWordCount = parseInt(eGoal.textContent);
 
     setTextareaHeight();
     countWords();
 
     // Upload the text every 300 milliseconds. A POST request is only actually
     // sent when the text has been changed from the saved version.
-    setInterval(uploadText, 300);
+    setInterval(saveTextToBackend, 300);
 
-    textarea.oninput = () => {
+    eTextInput.oninput = () => {
         setTextareaHeight();
         countWords();
     };
 
-    const editButton = document.getElementById("editButton");
-    const saveButton = document.getElementById("saveButton");
-    const cancelButton = document.getElementById("cancelButton");
-    const goal = document.getElementById("goal");
-    const goalInput = document.getElementById("goalInput");
+    eEditButton.onclick = () => {
+        eEditButton.style.display = "none";
+        eSaveButton.style.display = "inline-block";
+        eCancelButton.style.display = "inline-block";
 
-    editButton.onclick = () => {
-        editButton.style.display = "none";
-        saveButton.style.display = "inline-block";
-        cancelButton.style.display = "inline-block";
+        eGoalInput.value = goal.textContent;
 
-        goalInput.value = goal.innerHTML;
-
-        goal.style.display = "none";
-        goalInput.style.display = "inline-block";
+        eGoal.style.display = "none";
+        eGoalInput.style.display = "inline-block";
     };
 
-    saveButton.onclick = () => {
-        editButton.style.display = "inline-block";
-        saveButton.style.display = "none";
-        cancelButton.style.display = "none";
+    eSaveButton.onclick = () => {
+        eEditButton.style.display = "inline-block";
+        eSaveButton.style.display = "none";
+        eCancelButton.style.display = "none";
 
-        let newWordCount = goalInput.value;
+        let newWordCount = eGoalInput.value;
         if (newWordCount !== "") {
-            updateWordCount(newWordCount);
-            goal.innerHTML = newWordCount;
+            gGoalWordCount = newWordCount;
+            countWords();
+            saveWordCountGoalToBackend(newWordCount);
+            eGoal.textContent = newWordCount;
         }
-        goal.style.display = "inline-block";
-        goalInput.style.display = "none";
+        eGoal.style.display = "inline-block";
+        eGoalInput.style.display = "none";
     };
 
-    cancelButton.onclick = () => {
-        editButton.style.display = "inline-block";
-        saveButton.style.display = "none";
-        cancelButton.style.display = "none";
+    eCancelButton.onclick = () => {
+        eEditButton.style.display = "inline-block";
+        eSaveButton.style.display = "none";
+        eCancelButton.style.display = "none";
 
-        goal.style.display = "inline-block";
-        goalInput.style.display = "none";
+        eGoal.style.display = "inline-block";
+        eGoalInput.style.display = "none";
     };
 
     // Confirm before closing page if there are unsaved changes.
     window.onbeforeunload = function (e) {
-        if (lastSaved !== textarea.value) {
+        if (gLastSaved !== eTextInput.value) {
             // I don't think the contents of this message actually matters:
             // Firefox doesn't seem to display it.
             return 'You have unsaved changes.';
@@ -87,77 +114,69 @@ function onload() {
     }
 }
 
+
+/**
+ * Resize the textarea once it's filled to the bottom.
+ */
 function setTextareaHeight() {
-    let textarea = document.getElementById("textInput");
     // Courtesy of https://stackoverflow.com/questions/454202/
-    textarea.style.height = "auto";
-    textarea.style.height = Math.min(window.innerHeight * 0.8,
-            textarea.scrollHeight) + "px";
+    eTextInput.style.height = "auto";
+    eTextInput.style.height = Math.min(window.innerHeight * 0.8,
+            eTextInput.scrollHeight) + "px";
 }
 
-// Store the last saved version of the text, to avoid unnecessary re-uploads of
-// the same text.
-let lastSaved = "";
-let csrftoken = Cookies.get("csrftoken");
 
 /**
  * Upload the contents of the textarea to the back-end server.
  */
-function uploadText() {
-    let text = document.getElementById("textInput").value;
-    if (lastSaved != text) {
-        let errorMsg = document.getElementById("errorMsg");
-
-        fetch("/upload", {
-            method: "post",
-            headers: {
-                "X-CSRFToken": csrftoken,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({text: text}),
-            credentials: 'include',
-        }).then(response => {
-            const errno = response.status;
-            if (errno >= 200 && errno < 300) {
-                lastSaved = text;
-                errorMsg.innerHTML = "";
-            } else {
-                console.error('Fetch error: status code', errno);
-                errorMsg.innerHTML = "Error: could not save changes. " +
-                    "The server returned error code " + errno + ".";
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error: ', error);
-            errorMsg.innerHTML = "Error: could not save changes. " +
-                "Is the server running?";
+function saveTextToBackend() {
+    let text = eTextInput.value;
+    if (gLastSaved != text) {
+        saveToBackend("/update/text", {text: text}, () => {
+            gLastSaved = text;
         });
     }
 }
 
 
-function updateWordCount(newCount) {
-    fetch("/update_wc", {
+/**
+ * Upload the user's word-count goal to the back-end server.
+ */
+function saveWordCountGoalToBackend(newGoal) {
+    saveToBackend("/update/word_count", {wordCountGoal: newGoal});
+}
+
+
+/**
+ * Save the plain object `data` to the back-end by POSTing it to `url`. If
+ * the function `onSuccess` is provided, it is invoked with no arguments if the
+ * request succeeds.
+ */
+function saveToBackend(url, data, onSuccess) {
+    fetch(url, {
         method: "post",
         headers: {
-            "X-CSRFToken": csrftoken,
+            "X-CSRFToken": gCsrftoken,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({wordCount: newCount}),
+        body: JSON.stringify(data),
         credentials: 'include',
     }).then(response => {
         const errno = response.status;
         if (errno >= 200 && errno < 300) {
-            errorMsg.innerHTML = "";
+            if (onSuccess) {
+                onSuccess();
+            }
+            eErrorMessage.textContent = "";
         } else {
             console.error('Fetch error: status code', errno);
-            errorMsg.innerHTML = "Error: could not save changes. " +
+            eErrorMessage.textContent = "Error: could not save changes. " +
                 "The server returned error code " + errno + ".";
         }
     })
     .catch(error => {
         console.error('Fetch error: ', error);
-        errorMsg.innerHTML = "Error: could not save changes. " +
+        eErrorMessage.textContent = "Error: could not save changes. " +
             "Is the server running?";
     });
 }
@@ -167,29 +186,44 @@ function updateWordCount(newCount) {
  * Count the number of words in the textarea and update the word count display.
  */
 function countWords() {
-    let text = document.getElementById("textInput").value;
+    let text = eTextInput.value;
     text = text.replace(/\s+/g, " ");
     let count = text.split(" ").filter(word => word.length > 0).length;
 
-    // Update the word counter.
-    let wordCountElem = document.getElementById("wordCount");
-    if (count === 1) {
-        wordCountElem.innerHTML = count + " word";
-    } else {
-        wordCountElem.innerHTML = count + " words";
-    }
+    redrawWordCounter(count);
+    redrawWordsToGoal(count);
+    redrawCumulativeWordCounter(count);
+}
 
-    // Update the words-to-goal counter.
-    let dailyGoal = parseInt(document.getElementById("goal").innerHTML);
-    let wordsToGoal = Math.max(dailyGoal - count, 0);
-    let wordsToGoalElem = document.getElementById("words-to-goal");
-    if (wordsToGoal === 1) {
-        wordsToGoalElem.innerHTML = wordsToGoal + " more word";
-    } else {
-        wordsToGoalElem.innerHTML = wordsToGoal + " more words";
-    }
 
-    // Update the cumulative words counter.
-    document.getElementById("cumulativeWordCount").innerHTML =
-        cumulativeWordCount + count;
+/**
+ * Redraw the words-to-goal element with the new word count.
+ */
+function redrawWordsToGoal(newCount) {
+    let wordsToGoal = Math.max(gGoalWordCount - newCount, 0);
+    eWordsToGoal.textContent = wordsToGoal + pluralize(" more word", wordsToGoal);
+}
+
+
+/**
+ * Redraw the word-counter element with the new word count.
+ */
+function redrawWordCounter(newCount) {
+    eWordCount.textContent = newCount + pluralize(" word", newCount);
+}
+
+
+/**
+ * Redraw the cumulative-word-counter element with the new word count.
+ */
+function redrawCumulativeWordCounter(newCount) {
+    eCumulativeWordCount.textContent = gCumulativeWordCount + newCount;
+}
+
+
+/**
+ * Pluralize the string, or not, depending on the count.
+ */
+function pluralize(word, count) {
+    return word + ((count === 1) ? "" : "s");
 }

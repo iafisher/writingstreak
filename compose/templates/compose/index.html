@@ -16,23 +16,23 @@
 
   {% include 'compose/accountmenu.html' %}
 
-  <textarea id="textInput">{{ entry.text }}</textarea>
-  <p id="errorMsg"></p>
+  <textarea id="text-input">{{ entry.text }}</textarea>
+  <p id="error-message"></p>
   <p>
-    <span id="wordCount">0 words</span>
-    (<span id="cumulativeWordCount">{{ total_word_count }}</span> to date)
+    <span id="word-count">0 words</span>
+    (<span id="cumulative-word-count">{{ total_word_count }}</span> to date)
   </p>
   <p>
     You need <span id="words-to-goal">{{ words_to_goal }} more word{{ words_to_goal|pluralize}}</span>
     to meet your daily goal of <span id="goal">{{ entry.word_count_goal }}</span>
     <!-- Hidden initially -->
-    <input type="number" id="goalInput" step="10" min="10">
+    <input type="number" id="goal-input" step="10" min="10">
     words.
-    <button id="editButton">Edit</button>
+    <button id="edit-button">Edit</button>
 
     <!-- These buttons are hidden to begin with. -->
-    <button id="saveButton">Save</button>
-    <button id="cancelButton">Cancel</button>
+    <button id="save-button">Save</button>
+    <button id="cancel-button">Cancel</button>
   </p>
   <h3>Past writing:</h3>
   <ul>

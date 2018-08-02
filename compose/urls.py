@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import path
 
 from . import views
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout', views.logout, name='logout'),
 
-    path('upload', views.upload, name='upload'),
-    path('update_wc', views.update_wc, name='update_wc'),
+    path('update/text', views.update_text, name='update_text'),
+    path('update/word_count', views.update_word_count,
+        name='update_word_count'),
 ]

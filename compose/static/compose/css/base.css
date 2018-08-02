@@ -348,16 +348,16 @@ template {
   width: 50%;
 }
 
-#accountMenu {
+#account-menu {
     list-style: none;
     float: right;
 }
 
-#accountMenu li {
+#account-menu li {
     display: inline;
     margin-left: 20px;
 }
 
-#accountMenu li:first {
+#account-menu li:first {
     margin-left: 0;
 }

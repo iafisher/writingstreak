@@ -7,6 +7,14 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 
+class DailyEntry(models.Model):
+    date = models.DateField()
+    text = models.TextField(blank=True)
+    word_count = models.IntegerField()
+    word_count_goal = models.IntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
 class DailyWriting(models.Model):
     date = models.DateField()
     text = models.TextField(blank=True)

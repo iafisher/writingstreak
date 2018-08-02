@@ -40,18 +40,18 @@ function onload() {
     const editButton = document.getElementById("editButton");
     const saveButton = document.getElementById("saveButton");
     const cancelButton = document.getElementById("cancelButton");
-    const goalWordCount = document.getElementById("goalWordCount");
-    const goalWordCountInput = document.getElementById("goalWordCountInput");
+    const goal = document.getElementById("goal");
+    const goalInput = document.getElementById("goalInput");
 
     editButton.onclick = () => {
         editButton.style.display = "none";
         saveButton.style.display = "inline-block";
         cancelButton.style.display = "inline-block";
 
-        goalWordCountInput.value = goalWordCount.innerHTML;
+        goalInput.value = goal.innerHTML;
 
-        goalWordCount.style.display = "none";
-        goalWordCountInput.style.display = "inline-block";
+        goal.style.display = "none";
+        goalInput.style.display = "inline-block";
     };
 
     saveButton.onclick = () => {
@@ -59,12 +59,12 @@ function onload() {
         saveButton.style.display = "none";
         cancelButton.style.display = "none";
 
-        let newWordCount = goalWordCountInput.value;
+        let newWordCount = goalInput.value;
         updateWordCount(newWordCount);
-        goalWordCount.innerHTML = newWordCount;
+        goal.innerHTML = newWordCount;
 
-        goalWordCount.style.display = "inline-block";
-        goalWordCountInput.style.display = "none";
+        goal.style.display = "inline-block";
+        goalInput.style.display = "none";
     };
 
     cancelButton.onclick = () => {
@@ -72,8 +72,8 @@ function onload() {
         saveButton.style.display = "none";
         cancelButton.style.display = "none";
 
-        goalWordCount.style.display = "inline-block";
-        goalWordCountInput.style.display = "none";
+        goal.style.display = "inline-block";
+        goalInput.style.display = "none";
     };
 
     // Confirm before closing page if there are unsaved changes.

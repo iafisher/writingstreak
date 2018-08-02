@@ -4,34 +4,34 @@ import json
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.db.models.fields import related_descriptors
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .models import DailyWriting, WSUser
+from .models import DailyWriting, WordCountGoal
 
 
 @login_required
 def index(request):
-    try:
-        wsuser = request.user.wsuser
-    except related_descriptors.RelatedObjectDoesNotExist:
-        wsuser = WSUser(user=request.user)
-        wsuser.save()
-
     today = datetime.date.today()
     try:
-        dailywriting = DailyWriting.objects.get(date=today, user=wsuser)
+        goal = WordCountGoal.objects.filter(user=request.user) \
+            .latest('start_date')
+    except WordCountGoal.DoesNotExist:
+        goal = WordCountGoal.objects.create(user=request.user,
+            start_date=today)
+
+    try:
+        dailywriting = DailyWriting.objects.get(date=today, user=request.user)
     except DailyWriting.DoesNotExist:
         text = ''
     else:
         text = dailywriting.text
 
-    past_writing = DailyWriting.objects.filter(date__lt=today, user=wsuser) \
-        .order_by('-date')
+    past_writing = DailyWriting.objects.filter(date__lt=today,
+        user=request.user).order_by('-date')
     word_count = sum(w.word_count for w in past_writing)
     context = {'writing': text, 'past': past_writing,
-        'word_count': word_count, 'user': wsuser}
+        'word_count': word_count, 'user': request.user, 'goal': goal}
     return render(request, 'compose/index.html', context)
 
 
@@ -57,8 +57,23 @@ def update_wc(request):
     if request.method == 'POST':
         obj = json.loads(request.body.decode('utf-8'))
         new_wc = obj['wordCount']
-        request.user.wsuser.word_count = new_wc
-        request.user.wsuser.save()
+
+        today = datetime.date.today()
+        try:
+            goal = WordCountGoal.objects.filter(user=request.user) \
+                .latest('start_date')
+        except WordCountGoal.DoesNotExist:
+            WordCountGoal.objects.create(user=request.user,
+                start_date=today, count=new_wc)
+        else:
+            if goal.start_date == today:
+                goal.count = new_wc
+                goal.save()
+            else:
+                goal.end_date = today - datetime.timedelta(1)
+                goal.save()
+                WordCountGoal.objects.create(user=request.user,
+                    start_date=today, count=new_wc)
         return HttpResponse()
     else:
         return redirect('compose:index')

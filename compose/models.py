@@ -5,32 +5,21 @@ from django.db import models
 from django.urls import reverse
 
 
-class WSUser(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    word_count = models.IntegerField(default=100)
-
-    class Meta:
-        verbose_name = 'Writing Streak user'
-
-    def __str__(self):
-        return str(self.user)
-
-
 class WordCountGoal(models.Model):
     start_date = models.DateField()
-    end_date = models.DateField()
-    count = models.IntegerField()
-    user = models.ForeignKey(WSUser, on_delete=models.CASCADE)
+    end_date = models.DateField(blank=True, null=True)
+    count = models.IntegerField(default=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return '{0.count} word(s) for {0.user}'.format(self)
+        return '{0.count} words for {0.user}'.format(self)
 
 
 class DailyWriting(models.Model):
     date = models.DateField()
     text = models.TextField(blank=True)
     word_count = models.IntegerField()
-    user = models.ForeignKey(WSUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
         self.word_count = self.calculate_word_count()
@@ -85,7 +74,7 @@ class DailyWriting(models.Model):
 class Streak(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
-    user = models.ForeignKey(WSUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return '{}\'s streak, {} to {}'.format(self.user,

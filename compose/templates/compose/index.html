@@ -23,9 +23,9 @@
     (<span id="cumulativeWordCount">{{ word_count }}</span> to date)
   </p>
   <p>
-    Current daily word goal: <span id="goalWordCount">{{ user.word_count }}</span>
+    Current daily word goal: <span id="goal">{{ goal.count }}</span>
     <!-- Hidden initially -->
-    <input type="number" id="goalWordCountInput" step="10" min="10">
+    <input type="number" id="goalInput" step="10" min="10">
     words
     <button id="editButton">Edit</button>
 

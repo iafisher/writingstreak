@@ -16,8 +16,14 @@ def index(request):
     past_entries = DailyEntry.objects.filter(date__lt=datetime.date.today(),
         user=request.user).order_by('-date')
     total_word_count = sum(e.word_count for e in past_entries)
-    context = {'entry': entry, 'past_entries': past_entries,
-        'total_word_count': total_word_count, 'user': request.user}
+    words_to_goal = max(entry.word_count_goal - entry.word_count, 0)
+    context = {
+        'entry': entry,
+        'past_entries': past_entries,
+        'total_word_count': total_word_count,
+        'user': request.user,
+        'words_to_goal': words_to_goal
+    }
     return render(request, 'compose/index.html', context)
 
 

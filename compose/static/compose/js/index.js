@@ -171,13 +171,25 @@ function countWords() {
     text = text.replace(/\s+/g, " ");
     let count = text.split(" ").filter(word => word.length > 0).length;
 
+    // Update the word counter.
     let wordCountElem = document.getElementById("wordCount");
-    if (count == 1) {
+    if (count === 1) {
         wordCountElem.innerHTML = count + " word";
     } else {
         wordCountElem.innerHTML = count + " words";
     }
 
+    // Update the words-to-goal counter.
+    let dailyGoal = parseInt(document.getElementById("goal").innerHTML);
+    let wordsToGoal = Math.max(dailyGoal - count, 0);
+    let wordsToGoalElem = document.getElementById("words-to-goal");
+    if (wordsToGoal === 1) {
+        wordsToGoalElem.innerHTML = wordsToGoal + " more word";
+    } else {
+        wordsToGoalElem.innerHTML = wordsToGoal + " more words";
+    }
+
+    // Update the cumulative words counter.
     document.getElementById("cumulativeWordCount").innerHTML =
         cumulativeWordCount + count;
 }

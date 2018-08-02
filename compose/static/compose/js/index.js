@@ -60,9 +60,10 @@ function onload() {
         cancelButton.style.display = "none";
 
         let newWordCount = goalInput.value;
-        updateWordCount(newWordCount);
-        goal.innerHTML = newWordCount;
-
+        if (newWordCount !== "") {
+            updateWordCount(newWordCount);
+            goal.innerHTML = newWordCount;
+        }
         goal.style.display = "inline-block";
         goalInput.style.display = "none";
     };

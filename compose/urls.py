@@ -13,7 +13,5 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout', views.logout, name='logout'),
 
-    path('update/text', views.update_text, name='update_text'),
-    path('update/word_count', views.update_word_count,
-        name='update_word_count'),
+    path('update', views.update, name='update'),
 ]

@@ -64,9 +64,8 @@ function onload() {
     setTextareaHeight();
     countWords();
 
-    // Upload the text every 300 milliseconds. A POST request is only actually
-    // sent when the text has been changed from the saved version.
-    setInterval(saveTextToBackend, 300);
+    // Save the text every 300 milliseconds.
+    setInterval(saveTextIfUnsaved, 300);
 
     eTextInput.oninput = () => {
         setTextareaHeight();
@@ -93,7 +92,7 @@ function onload() {
         if (newWordCount !== "" && newWordCount >= 10) {
             gGoalWordCount = newWordCount;
             countWords();
-            saveWordCountGoalToBackend(newWordCount);
+            saveEntry({word_count_goal: newWordCount})
             eGoal.textContent = newWordCount;
         }
         eGoal.style.display = "inline-block";
@@ -132,12 +131,13 @@ function setTextareaHeight() {
 
 
 /**
- * Upload the contents of the textarea to the back-end server.
+ * Upload the contents of the textarea to the back-end server, if there have
+ * been changes since the last save.
  */
-function saveTextToBackend() {
+function saveTextIfUnsaved() {
     let text = eTextInput.value;
     if (gLastSaved != text) {
-        saveToBackend("/update/text", {text: text}, () => {
+        saveEntry({text: text}, () => {
             gLastSaved = text;
         });
     }
@@ -145,26 +145,20 @@ function saveTextToBackend() {
 
 
 /**
- * Upload the user's word-count goal to the back-end server.
+ * Save the plain object `entry` to the back-end database. If the function
+ * `onSuccess` is provided, it is invoked with no arguments if the request
+ * succeeds.
+ *
+ * `entry` may have a `text` field and/or a `word_count_goal` field.
  */
-function saveWordCountGoalToBackend(newGoal) {
-    saveToBackend("/update/word_count", {wordCountGoal: newGoal});
-}
-
-
-/**
- * Save the plain object `data` to the back-end by POSTing it to `url`. If
- * the function `onSuccess` is provided, it is invoked with no arguments if the
- * request succeeds.
- */
-function saveToBackend(url, data, onSuccess) {
-    fetch(url, {
+function saveEntry(entry, onSuccess) {
+    fetch("/update", {
         method: "post",
         headers: {
             "X-CSRFToken": gCsrftoken,
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(entry),
         credentials: 'include',
     }).then(response => {
         const errno = response.status;

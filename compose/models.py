@@ -48,11 +48,15 @@ class DailyEntry(models.Model):
         }
         return reverse('compose:archive', kwargs=kwargs)
 
+    def calculate_word_count(self):
+        return len(self.text.split())
+
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'
 
-    def calculate_word_count(self):
-        return len(self.text.split())
+    def to_json(self):
+        return {'text': self.text, 'word_count_goal': self.word_count_goal,
+            'word_count': self.word_count}
 
     def __str__(self):
         prefix = '{}, {}'.format(self.user, self.date.isoformat())

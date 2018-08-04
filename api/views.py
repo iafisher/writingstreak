@@ -1,10 +1,17 @@
+import datetime
 import json
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
 
 from compose.models import DailyEntry
+
+
+@login_required
+def fetch(request):
+    entry = get_object_or_404(DailyEntry, date=datetime.date.today())
+    return JsonResponse(entry.to_json())
 
 
 @login_required

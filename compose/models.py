@@ -70,6 +70,7 @@ def get_current_streak(user):
 
     count = 0
     for entry in entries:
+        # Exit early for skipped days and for days below the word count goal.
         if last_date - entry.date != datetime.timedelta(1):
             break
         elif entry.word_count < entry.word_count_goal:

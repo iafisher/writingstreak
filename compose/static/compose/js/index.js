@@ -90,7 +90,7 @@ function onload() {
         eCancelButton.style.display = "none";
 
         let newWordCount = eGoalInput.value;
-        if (newWordCount !== "") {
+        if (newWordCount !== "" && newWordCount >= 10) {
             gGoalWordCount = newWordCount;
             countWords();
             saveWordCountGoalToBackend(newWordCount);

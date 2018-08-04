@@ -1,4 +1,5 @@
 import datetime
+import itertools
 import json
 
 from django.contrib import auth
@@ -13,19 +14,37 @@ from .models import DailyEntry, get_current_streak
 @login_required
 def index(request):
     entry = DailyEntry.objects.today(user=request.user)
-    past_entries = DailyEntry.objects.filter(date__lt=datetime.date.today(),
-        user=request.user).order_by('-date')
-    total_word_count = sum(e.word_count for e in past_entries)
+    past_entries_by_month = get_past_entries_by_month(request.user)
+
+    total_word_count = sum(e.word_count
+        for _, past_entries in past_entries_by_month
+        for e in past_entries)
     words_to_goal = max(entry.word_count_goal - entry.word_count, 0)
     context = {
         'entry': entry,
-        'past_entries': past_entries,
+        'past_entries_by_month': past_entries_by_month,
         'streak_length': get_current_streak(request.user),
         'total_word_count': total_word_count,
         'user': request.user,
         'words_to_goal': words_to_goal
     }
     return render(request, 'compose/index.html', context)
+
+
+def get_past_entries_by_month(user):
+    """Return a list of (month, entries) pairs in reverse chronological order,
+    where `month` is the month and year as a string and `entries` is a list of
+    DailyEntry objects, also in reverse chronological order.
+    """
+    past_entries = DailyEntry.objects.filter(date__lt=datetime.date.today(),
+        user=user).order_by('-date')
+    key = lambda e: (e.date.month, e.date.year)
+    return [month(g) for _, g in itertools.groupby(past_entries, key)]
+
+
+def month(entrygroup):
+    entrygroup = list(entrygroup)
+    return (entrygroup[0].date.strftime('%B %Y'), entrygroup)
 
 
 @login_required
@@ -60,13 +79,14 @@ def update_word_count(request):
 
 @login_required
 def archive(request, year, month, day):
-    today = datetime.date.today()
     date = datetime.date(year, month, day)
-    dailywriting = get_object_or_404(DailyEntry, date=date, user=request.user)
-    past_writing = DailyEntry.objects.filter(date__lt=today,
-        user=request.user).order_by('-date')
-    context = {'writing': dailywriting, 'past': past_writing,
-        'user': request.user}
+    entry = get_object_or_404(DailyEntry, date=date, user=request.user)
+    past_entries_by_month = get_past_entries_by_month(request.user)
+    context = {
+        'entry': entry,
+        'past_entries_by_month': past_entries_by_month,
+        'user': request.user
+    }
     return render(request, 'compose/archive.html', context)
 
 

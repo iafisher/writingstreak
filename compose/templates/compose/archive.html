@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}{{ writing.date }} | Writing Streak{% endblock %}
+{% block title %}{{ entry.date }} | Writing Streak{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="{% static 'compose/css/index.css' %}">
@@ -13,20 +13,11 @@
   {% include 'compose/accountmenu.html' %}
 
   <p><a href="/">Home</a></p>
-  <h2>{{ writing.date }}</h2>
+  <h2>{{ entry.date }}</h2>
   {% autoescape off %}
-  <p>{{ writing.text_as_html }}</p>
+  <div id="archive-text">{{ entry.text_as_html }}</div>
   {% endautoescape %}
 
-  <h3>Past writing:</h3>
-  <ul>
-    {% for writing in past %}
-    <li><a href="{{ writing.get_absolute_url }}">{{ writing.date }}</a>
-      ({{ writing.word_count }} word{{ writing.word_count|pluralize }})
-    </li>
-    {% empty %}
-    <li>No writing yet!</li>
-    {% endfor %}
-  </ul>
+  {% include 'compose/pastentries.html' %}
 </div>
 {% endblock %}

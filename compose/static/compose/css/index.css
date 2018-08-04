@@ -23,3 +23,11 @@
 #goal-input {
     display: none;
 }
+
+#past-writing-list li {
+    margin-bottom: 10px;
+}
+
+#archive-text {
+    line-height: 1.5;
+}

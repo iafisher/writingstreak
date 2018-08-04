@@ -1,0 +1,15 @@
+<h3>Past writing:</h3>
+<ul id="past-writing-list">
+  {% for month, past_entries in past_entries_by_month %}
+  <li>{{ month }}</li>
+  <ul>
+  {% for past_entry in past_entries %}
+  <li><a href="{{ past_entry.get_absolute_url }}">{{ past_entry.date }}</a>
+    ({{ past_entry.word_count }} word{{ past_entry.word_count|pluralize }})
+  </li>
+  {% endfor %}
+  </ul>
+  {% empty %}
+  <li>No writing yet!</li>
+  {% endfor %}
+</ul>

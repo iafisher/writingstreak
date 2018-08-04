@@ -1,11 +1,9 @@
 import datetime
 import itertools
-import json
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import DailyEntry, get_current_streak
@@ -45,28 +43,6 @@ def get_past_entries_by_month(user, *, exclude=None):
 def month(entrygroup):
     entrygroup = list(entrygroup)
     return (entrygroup[0].date.strftime('%B %Y'), entrygroup)
-
-
-@login_required
-def update(request):
-    if request.method == 'POST':
-        try:
-            obj = json.loads(request.body.decode('utf-8'))
-        except (JSONDecodeError, UnicodeDecodeError):
-            return HttpResponse(status_code=400)
-
-        text = obj.get('text')
-        word_count_goal = obj.get('word_count_goal')
-
-        entry = DailyEntry.objects.today(user=request.user)
-        if text:
-            entry.text = text
-        if word_count_goal:
-            entry.word_count_goal = word_count_goal
-        entry.save()
-        return HttpResponse()
-    else:
-        return redirect('compose:index')
 
 
 @login_required

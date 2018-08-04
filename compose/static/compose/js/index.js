@@ -152,7 +152,7 @@ function saveTextIfUnsaved() {
  * `entry` may have a `text` field and/or a `word_count_goal` field.
  */
 function saveEntry(entry, onSuccess) {
-    fetch("/update", {
+    fetch("/api/update", {
         method: "post",
         headers: {
             "X-CSRFToken": gCsrftoken,

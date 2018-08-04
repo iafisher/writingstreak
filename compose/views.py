@@ -31,13 +31,13 @@ def index(request):
     return render(request, 'compose/index.html', context)
 
 
-def get_past_entries_by_month(user):
+def get_past_entries_by_month(user, *, exclude=None):
     """Return a list of (month, entries) pairs in reverse chronological order,
     where `month` is the month and year as a string and `entries` is a list of
     DailyEntry objects, also in reverse chronological order.
     """
     past_entries = DailyEntry.objects.filter(date__lt=datetime.date.today(),
-        user=user).order_by('-date')
+        user=user).exclude(date=exclude).order_by('-date')
     key = lambda e: (e.date.month, e.date.year)
     return [month(g) for _, g in itertools.groupby(past_entries, key)]
 
@@ -81,7 +81,8 @@ def update_word_count(request):
 def archive(request, year, month, day):
     date = datetime.date(year, month, day)
     entry = get_object_or_404(DailyEntry, date=date, user=request.user)
-    past_entries_by_month = get_past_entries_by_month(request.user)
+    past_entries_by_month = get_past_entries_by_month(request.user,
+        exclude=date)
     context = {
         'entry': entry,
         'past_entries_by_month': past_entries_by_month,

@@ -24,8 +24,11 @@ def get_past_entries_by_month(user, *, exclude=None):
     where `month` is the month and year as a string and `entries` is a list of
     DailyEntry objects, also in reverse chronological order.
     """
-    past_entries = DailyEntry.objects.filter(date__lt=datetime.date.today(),
-        user=user).exclude(date=exclude).order_by('-date')
+    past_entries = DailyEntry.objects \
+        .filter(date__lt=datetime.date.today(), user=user) \
+        .exclude(date=exclude) \
+        .exclude(word_count=0) \
+        .order_by('-date')
     key = lambda e: (e.date.month, e.date.year)
     return [month(g) for _, g in itertools.groupby(past_entries, key)]
 

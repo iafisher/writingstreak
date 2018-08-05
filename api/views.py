@@ -38,9 +38,9 @@ def update(request):
         word_count_goal = obj.get('word_count_goal')
 
         entry = DailyEntry.objects.today(user=request.user)
-        if text:
+        if text is not None:
             entry.text = text
-        if word_count_goal:
+        if word_count_goal is not None:
             entry.word_count_goal = word_count_goal
         entry.save()
         return HttpResponse()

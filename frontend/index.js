@@ -165,7 +165,6 @@ class Window extends React.Component {
     }
 
     handleSave() {
-
         saveEntry({word_count_goal: this.state.editValue}, () => {
             /* Success */
             this.setState({
@@ -247,7 +246,7 @@ function fetchEntry(onSuccess) {
     fetch("/api/fetch", {
         method: "get",
         headers: {
-            "X-CSRFToken": gCsrftoken,
+            "X-CSRFToken": csrftoken,
             "Content-Type": "application/json"
         },
         credentials: 'include',
@@ -276,7 +275,7 @@ function saveEntry(entry, onSuccess, onError) {
     fetch("/api/update", {
         method: "post",
         headers: {
-            "X-CSRFToken": gCsrftoken,
+            "X-CSRFToken": csrftoken,
             "Content-Type": "application/json"
         },
         body: JSON.stringify(entry),

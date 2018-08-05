@@ -5,15 +5,26 @@ want a new feature, you can just implement it.
 
 Writing Streak is a Django app. To install and run, you'll need Python 3.6 or
 later (older versions of Python 3 may also work, but I have not confirmed it).
+You will also need Node.js, version 8.2 or higher.
 
-    # If you use virtualenvwrapper
+    # If you use virtualenvwrapper:
     $ mkvirtualenv writingstreak --python=python3
 
     $ git clone https://github.com/iafisher/writingstreak.git
     $ cd writingstreak
     $ pip3 install -r requirements.txt
+
+    # Set up the database.
     $ ./manage.py migrate
     $ ./manage.py createsuperuser
+
+    # Bundle the front-end JavaScript.
+    $ cd frontend
+    $ npm install
+    $ npx webpack
+
+    # Start the server.
+    $ cd ..
     $ ./manage.py runserver
 
 You are free to use this code however you like, but if you plan on deploying it

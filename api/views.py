@@ -5,13 +5,25 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 
-from compose.models import DailyEntry
+from compose.models import DailyEntry, get_current_streak
 
 
 @login_required
 def fetch(request):
-    entry = get_object_or_404(DailyEntry, date=datetime.date.today())
-    return JsonResponse(entry.to_json())
+    today = datetime.date.today()
+
+    entry = get_object_or_404(DailyEntry, user=request.user, date=today)
+    total_word_count = sum(e.word_count
+        for e in DailyEntry.objects.filter(date__lt=today))
+    streak_length = get_current_streak(request.user)
+    response = {
+        'streak_length': streak_length,
+        'text': entry.text,
+        'total_word_count': total_word_count,
+        'word_count': entry.word_count,
+        'word_count_goal': entry.word_count_goal,
+    }
+    return JsonResponse(response)
 
 
 @login_required

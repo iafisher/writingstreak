@@ -1,0 +1,1 @@
+import Window from './index';

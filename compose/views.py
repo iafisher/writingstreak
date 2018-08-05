@@ -11,20 +11,10 @@ from .models import DailyEntry, get_current_streak
 
 @login_required
 def index(request):
-    entry = DailyEntry.objects.today(user=request.user)
     past_entries_by_month = get_past_entries_by_month(request.user)
-
-    total_word_count = sum(e.word_count
-        for _, past_entries in past_entries_by_month
-        for e in past_entries)
-    words_to_goal = max(entry.word_count_goal - entry.word_count, 0)
     context = {
-        'entry': entry,
         'past_entries_by_month': past_entries_by_month,
-        'streak_length': get_current_streak(request.user),
-        'total_word_count': total_word_count,
         'user': request.user,
-        'words_to_goal': words_to_goal
     }
     return render(request, 'compose/index.html', context)
 

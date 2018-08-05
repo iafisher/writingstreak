@@ -54,10 +54,6 @@ class DailyEntry(models.Model):
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'
 
-    def to_json(self):
-        return {'text': self.text, 'word_count_goal': self.word_count_goal,
-            'word_count': self.word_count}
-
     def __str__(self):
         prefix = '{}, {}'.format(self.user, self.date.isoformat())
         if self.text:

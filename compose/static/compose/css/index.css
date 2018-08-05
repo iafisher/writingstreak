@@ -12,6 +12,7 @@
   color: crimson;
 }
 
+/*
 #save-button {
     display: none;
 }
@@ -23,6 +24,7 @@
 #goal-input {
     display: none;
 }
+*/
 
 #past-writing-list li {
     margin-bottom: 10px;

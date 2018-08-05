@@ -2,3 +2,6 @@
 __pycache__
 
 *.sqlite3
+
+/frontend/dist
+/frontend/node_modules

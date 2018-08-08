@@ -12,7 +12,7 @@ from compose.models import DailyEntry, get_current_streak
 def fetch(request):
     today = datetime.date.today()
 
-    entry = get_object_or_404(DailyEntry, user=request.user, date=today)
+    entry = DailyEntry.objects.today(user=request.user)
     total_word_count = sum(e.word_count
         for e in DailyEntry.objects.filter(date__lt=today))
     streak_length = get_current_streak(request.user)

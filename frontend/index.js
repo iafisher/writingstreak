@@ -307,7 +307,7 @@ function setTextareaHeight() {
     const textarea = document.getElementById("text-input");
     // Courtesy of https://stackoverflow.com/questions/454202/
     textarea.style.height = "auto";
-    textarea.style.height = Math.min(window.innerHeight * 0.8,
+    textarea.style.height = Math.min(window.innerHeight * 0.75,
             textarea.scrollHeight) + "px";
 }
 

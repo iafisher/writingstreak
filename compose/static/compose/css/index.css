@@ -4,27 +4,13 @@
   width: 100%;
   min-height: 200px;
   font-size: 16px;
-  overflow-y: hidden;
+  overflow-y: scroll;
 }
 
 #error-message {
   font-weight: bold;
   color: crimson;
 }
-
-/*
-#save-button {
-    display: none;
-}
-
-#cancel-button {
-    display: none;
-}
-
-#goal-input {
-    display: none;
-}
-*/
 
 #past-writing-list li {
     margin-bottom: 10px;

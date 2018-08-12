@@ -11,10 +11,13 @@ from compose.models import DailyEntry, get_current_streak
 @login_required
 def fetch(request):
     today = datetime.date.today()
+    user = request.user
 
-    entry = DailyEntry.objects.today(user=request.user)
+    entry = DailyEntry.objects.today(user=user)
     total_word_count = sum(e.word_count
-        for e in DailyEntry.objects.filter(date__lt=today))
+        for e in DailyEntry.objects.filter(user=user, date__lt=today))
+    word_count_this_month = sum(e.word_count
+        for e in DailyEntry.objects.filter(user=user, date__month=today.month))
     streak_length = get_current_streak(request.user)
     response = {
         'streak_length': streak_length,
@@ -22,6 +25,7 @@ def fetch(request):
         'total_word_count': total_word_count,
         'word_count': entry.word_count,
         'word_count_goal': entry.word_count_goal,
+        'word_count_this_month': word_count_this_month,
     }
     return JsonResponse(response)
 

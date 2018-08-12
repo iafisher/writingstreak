@@ -18,7 +18,8 @@ let csrftoken = Cookies.get("csrftoken");
 function WordCount(props) {
     return (
         <p>
-          {quantify(props.count, "word")} ({props.count + props.total} to date)
+          {quantify(props.count, "word")} ({props.count + props.total} to
+          date, {props.this_month} this month)
         </p>
     );
 }
@@ -105,6 +106,7 @@ class Window extends React.Component {
             totalWordCount: 0,
             wordCount: 0,
             wordCountGoal: 100,
+            wordCountThisMonth: 0,
         };
         fetchEntry(entry => this.onFetch(entry));
 
@@ -124,6 +126,7 @@ class Window extends React.Component {
             totalWordCount: entry['total_word_count'],
             wordCountGoal: entry['word_count_goal'],
             wordCount: entry['word_count'],
+            wordCountThisMonth: entry['word_count_this_month'],
         });
         setTextareaHeight();
     }
@@ -139,6 +142,7 @@ class Window extends React.Component {
               <WordCount
                 count={this.state.wordCount}
                 total={this.state.totalWordCount}
+                this_month={this.state.wordCountThisMonth}
               />
               <WordCountGoal
                 count={this.state.wordCount}

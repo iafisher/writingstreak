@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 
-from compose.models import DailyEntry, get_current_streak
+from compose.models import DailyEntry, get_current_streak, get_longest_streak
 
 
 @login_required
@@ -18,9 +18,9 @@ def fetch(request):
         for e in DailyEntry.objects.filter(user=user, date__lt=today))
     word_count_this_month = sum(e.word_count
         for e in DailyEntry.objects.filter(user=user, date__month=today.month))
-    streak_length = get_current_streak(request.user)
     response = {
-        'streak_length': streak_length,
+        'longest_streak': get_longest_streak(user),
+        'streak_length': get_current_streak(user),
         'text': entry.text,
         'total_word_count': total_word_count,
         'word_count': entry.word_count,

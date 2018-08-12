@@ -32,10 +32,10 @@ function WordCountGoal(props) {
             <p>
               You need {quantify(wordsLeft, "more word")} to meet your
               daily goal of
-              <input type="number" id="goal-input" step="10" min="10"
-                value={props.value}
-                onChange={props.handleChange} 
-              />
+              of <input type="number" id="goal-input" step="10" min="10"
+                   value={props.value}
+                   onChange={props.handleChange} 
+                 />
               words.
 
               <button onClick={props.handleSave} id="save-button">
@@ -66,9 +66,18 @@ function StreakLength(props) {
     if (props.count >= props.goal) {
         realLength = realLength + 1;
     }
-    return (
-        <p>You are on a {realLength} day streak.</p>
-    );
+    if (realLength >= props.longest) {
+        return (
+            <p>You are on a {realLength} day streak, your longest yet.</p>
+        );
+    } else {
+        return (
+            <p>
+              You are on a {realLength} day streak. Your longest streak
+              was {quantify(props.longest, "day")}.
+            </p>
+        );
+    }
 }
 
 
@@ -101,6 +110,7 @@ class Window extends React.Component {
             editValue: 0,
             errorMessage: "",
             lastSaved: "",
+            longestStreak: 0,
             streakLength: 0,
             text: "",
             totalWordCount: 0,
@@ -121,6 +131,7 @@ class Window extends React.Component {
         this.setState({
             editValue: entry['word_count_goal'],
             lastSaved: entry['text'],
+            longestStreak: entry['longest_streak'],
             streakLength: entry['streak_length'],
             text: entry['text'],
             totalWordCount: entry['total_word_count'],
@@ -159,6 +170,7 @@ class Window extends React.Component {
                 length={this.state.streakLength}
                 count={this.state.wordCount}
                 goal={this.state.wordCountGoal}
+                longest={this.state.longestStreak}
               />
             </div>
         );

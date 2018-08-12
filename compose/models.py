@@ -79,3 +79,24 @@ def get_current_streak(user):
         count += 1
         last_date = entry.date
     return count
+
+
+def get_longest_streak(user):
+    """Get the length of the user's longest streak."""
+    entries = DailyEntry.objects.filter(user=user).order_by('-date')
+
+    count = 1
+    longest = 0
+    last_date = datetime.date.today() + datetime.timedelta(1)
+    for entry in entries:
+        # Exit early for skipped days and for days below the word count goal.
+        if last_date - entry.date != datetime.timedelta(1):
+            longest = max(count, longest)
+            count = 1
+        elif entry.word_count < entry.word_count_goal:
+            longest = max(count, longest)
+            count = 1
+        else:
+            count += 1
+        last_date = entry.date
+    return max(count, longest)

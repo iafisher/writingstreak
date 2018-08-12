@@ -248,8 +248,7 @@ class Window extends React.Component {
 
 
 function countWords(text) {
-    return text.replace(/\s+/g, " ").split(" ").filter(
-        word => word.length > 0).length;
+    return text.split(/\s+|--+/).filter(word => word.length > 0).length;
 }
 
 

@@ -1,4 +1,5 @@
 import datetime
+import re
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -49,8 +50,10 @@ class DailyEntry(models.Model):
         }
         return reverse('compose:archive', kwargs=kwargs)
 
+    # Split on whitespace and more than one dash.
+    regex = re.compile(r'\s+|--+')
     def calculate_word_count(self):
-        return len(self.text.split())
+        return len(self.regex.split(self.text))
 
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'

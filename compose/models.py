@@ -35,6 +35,7 @@ class DailyEntry(models.Model):
 
     class Meta:
         verbose_name_plural = 'daily entries'
+        ordering = ('-date',)
 
     def save(self, *args, **kwargs):
         self.word_count = self.calculate_word_count()

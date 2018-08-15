@@ -68,6 +68,9 @@ def login(request):
             }
             return render(request, 'compose/login.html', context)
     else:
+        if request.user.is_authenticated:
+            return redirect('/')
+
         form = AuthenticationForm()
         context = {
             'form': form,

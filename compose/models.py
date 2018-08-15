@@ -53,7 +53,7 @@ class DailyEntry(models.Model):
     # Split on whitespace and more than one dash.
     regex = re.compile(r'\s+|--+')
     def calculate_word_count(self):
-        return len(self.regex.split(self.text))
+        return sum(1 for w in self.regex.split(self.text) if w)
 
     def text_as_html(self):
         return '<p>' + '</p><p>'.join(self.text.splitlines()) + '</p>'

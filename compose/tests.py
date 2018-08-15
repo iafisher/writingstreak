@@ -24,8 +24,8 @@ class TestURLs(TestCase):
         self.assertEqual(found.func, views.archive)
 
 
-TMP_USER = 'temporary'
-TMP_PWD = 'pwd'
+TEST_USER = 'temporary'
+TEST_PWD = 'pwd'
 
 
 class TestPages(TestCase):
@@ -33,10 +33,10 @@ class TestPages(TestCase):
 
     def setUp(self):
         User = get_user_model()
-        User.objects.create_user(TMP_USER, 'temporary@example.com', TMP_PWD)
+        User.objects.create_user(TEST_USER, 'temporary@example.com', TEST_PWD)
 
     def test_index_page_template(self):
-        self.client.login(username=TMP_USER, password=TMP_PWD)
+        self.client.login(username=TEST_USER, password=TEST_PWD)
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'compose/index.html')
 
@@ -48,10 +48,10 @@ class TestPages(TestCase):
 class TestRedirects(TestCase):
     def setUp(self):
         User = get_user_model()
-        User.objects.create_user(TMP_USER, 'temporary@example.com', TMP_PWD)
+        User.objects.create_user(TEST_USER, 'temporary@example.com', TEST_PWD)
 
     def test_login_page_redirects(self):
-        self.client.login(username=TMP_USER, password=TMP_PWD)
+        self.client.login(username=TEST_USER, password=TEST_PWD)
         response = self.client.get('/login')
         self.assertRedirects(response, '/')
 

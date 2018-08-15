@@ -12,7 +12,7 @@
     {% csrf_token %}
     {{ form.as_p }}
     <input type="hidden" name="next" value="{{ next|default_if_none:"/" }}" />
-    <input type="submit" value="Log in" />
+    <input id="submit" type="submit" value="Log in" />
   </form>
 </div>
 {% endblock %}

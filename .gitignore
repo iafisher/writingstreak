@@ -1,6 +1,7 @@
 *.swp
 __pycache__
 
+*.log
 *.sqlite3
 
 /frontend/dist

@@ -16,10 +16,11 @@ let csrftoken = Cookies.get("csrftoken");
 
 
 function WordCount(props) {
+    let toDate = (props.count + props.total).toLocaleString();
     return (
         <p>
-          {quantify(props.count, "word")} ({props.count + props.total} to
-          date, {props.this_month} this month)
+          {quantify(props.count, "word")} ({toDate} to
+          date, {props.this_month.toLocaleString()} this month)
         </p>
     );
 }
@@ -50,7 +51,7 @@ function WordCountGoal(props) {
         return (
             <p>
               You need {quantify(wordsLeft, "more word")} to meet your
-              daily goal of {props.goal} words.
+              daily goal of {props.goal.toLocaleString()} words.
 
               <button onClick={props.handleEdit} id="edit-button">
                 Edit
@@ -66,15 +67,19 @@ function StreakLength(props) {
     if (props.count >= props.goal) {
         realLength = realLength + 1;
     }
+
     if (realLength >= props.longest) {
         return (
-            <p>You are on a {realLength} day streak, your longest yet.</p>
+            <p>
+              You are on a {realLength.toLocaleString()} day streak, your
+              longest yet.
+            </p>
         );
     } else {
         return (
             <p>
-              You are on a {realLength} day streak. Your longest streak
-              was {quantify(props.longest, "day")}.
+              You are on a {realLength.toLocaleString()} day streak. Your
+              longest streak was {quantify(props.longest, "day")}.
             </p>
         );
     }
@@ -253,7 +258,7 @@ function countWords(text) {
 
 
 function quantify(n, s) {
-    return n + " " + s + (n === 1 ? "" : "s");
+    return n.toLocaleString() + " " + s + (n === 1 ? "" : "s");
 }
 
 

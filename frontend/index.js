@@ -17,10 +17,11 @@ let csrftoken = Cookies.get("csrftoken");
 
 function WordCount(props) {
     let toDate = (props.count + props.total).toLocaleString();
+    let thisMonth = (props.count + props.this_month).toLocaleString();
     return (
         <p>
           {quantify(props.count, "word")} ({toDate} to
-          date, {props.this_month.toLocaleString()} this month)
+          date, {thisMonth} this month)
         </p>
     );
 }

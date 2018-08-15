@@ -41,7 +41,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         text = ' '.join(p.text for p in paragraphs)
 
         self.assertIn('2 words', text)
-        self.assertIn('(2 to date, 0 this month)', text)
+        self.assertIn('(2 to date, 2 this month)', text)
         self.assertIn('You need 98 more words to meet your daily goal of ' +
             '100 words.', text)
         self.assertIn('You are on a 0 day streak.', text)

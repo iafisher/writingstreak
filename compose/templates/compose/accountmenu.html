@@ -1,5 +1,0 @@
-<ul id="account-menu">
-  <li>{{ user.username }}</li>
-  {% if user.is_staff %}<li><a href="{% url 'admin:index' %}" target="_blank">admin</a></li>{% endif %}
-  <li><a href="{% url 'compose:logout' %}">logout</a></li>
-</ul>

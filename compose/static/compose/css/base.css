@@ -348,16 +348,22 @@ template {
   width: 50%;
 }
 
-#account-menu {
-    list-style: none;
-    float: right;
+.account-menu {
+  width: 100%;
+  text-align: right;
+  list-style: none;
+  padding-left: 0;
 }
 
-#account-menu li {
+.account-menu li {
     display: inline;
     margin-left: 20px;
 }
 
-#account-menu li:first {
+.account-menu li:first {
     margin-left: 0;
+}
+
+.past-writing-list li {
+    margin-bottom: 10px;
 }

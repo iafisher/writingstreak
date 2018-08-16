@@ -5,14 +5,18 @@
 {% block title %}{{ entry.date }} | Writing Streak{% endblock %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="{% static 'compose/css/index.css' %}">
+<link rel="stylesheet" href="{% static 'compose/css/archive.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="container">
-  {% include 'compose/accountmenu.html' %}
+  <ul class="account-menu">
+    <li>{{ user.username }}</li>
+    <li><a href="{% url 'compose:index' %}">home</a></li>
+    {% if user.is_staff %}<li><a href="{% url 'admin:index' %}" target="_blank">admin</a></li>{% endif %}
+    <li><a href="{% url 'compose:logout' %}">logout</a></li>
+  </ul>
 
-  <p><a href="/">Home</a></p>
   <h2>{{ entry.date }}</h2>
   {% autoescape off %}
   <div id="archive-text">{{ entry.text_as_html }}</div>
